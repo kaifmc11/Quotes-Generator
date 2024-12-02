@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantum Quotes - Inspirational Platform</title>
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #333;
+            --background-color: #f4f4f9;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+            padding: 20px;
+        }
+        .quote-platform {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .quote-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #quoteText {
+            font-size: 28px;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 30px;
+        }
+        #quoteText::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--primary-color);
+            font-size: 60px;
+            line-height: 1;
+        }
+        #authorText {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .generate-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .speak-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        .tweet-btn {
+            background: #1DA1F2;
+            color: white;
+        }
+        .genre-select {
+            appearance: none;
+            background: #f1f3f5;
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .stats-container {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .stat-box {
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        #voiceSelect, #languageSelect {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quote-platform">
+        <div class="quote-section">
+            <div>
+                <div id="quoteText">Welcome to Quantum Quotes!</div>
+                <div id="authorText"></div>
+            </div>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <strong id="totalQuotesSpan">0</strong>
+                    <div>Total Quotes</div>
+                </div>
+                <div class="stat-box">
+                    <strong id="quoteGenreSpan">-</strong>
+                    <div>Current Genre</div>
+                </div>
+                <div class="stat-box">
+                    <strong id="quoteLanguageSpan">EN</strong>
+                    <div>Language</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <select id="genreSelect" class="genre-select">
+                <option value="">Select Genre</option>
+                <option value="motivation">Motivation</option>
+                <option value="success">Success</option>
+                <option value="love">Love</option>
+                <option value="wisdom">Wisdom</option>
+                <option value="courage">Courage</option>
+            </select>
+            <select id="languageSelect" class="genre-select">
+                <option value="">Select Language</option>
+                <option value="en-US">English (US)</option>
+                <option value="es-ES">Spanish (Spain)</option>
+                <option value="fr-FR">French (France)</option>
+                <option value="de-DE">German (Germany)</option>
+                <option value="it-IT">Italian (Italy)</option>
+            </select>
+            <button id="generateBtn" class="btn generate-btn">
+                🎲 Generate Quote
+            </button>
+            <button id="speakBtn" class="btn speak-btn">
+                🔊 Speak Quote
+            </button>
+            <button id="tweetBtn" class="btn tweet-btn">
+                🐦 Share Quote
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class QuantumQuoteGenerator {
+            constructor() {
+                this.quotes = {
+                    motivation: [
+                        { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", translations: {
+                            'es-ES': 'Cree que puedes y ya estás a medio camino.',
+                            'fr-FR': 'Croyez que vous pouvez et vous êtes déjà à mi-chemin.',
+                            'de-DE': 'Glauben Sie, dass Sie können, und Sie sind schon halb da.',
+                            'it-IT': 'Credici e sei già a metà strada.'
+                        }},
+                        { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", translations: {
+                            'es-ES': 'La única forma de hacer un gran trabajo es amar lo que haces.',
+                            'fr-FR': 'La seule façon de faire du bon travail est d\'aimer ce que vous faites.',
+                            'de-DE': 'Der einzige Weg, großartige Arbeit zu leisten, ist, das zu lieben, was Sie tun.',
+                            'it-IT': 'L\'unico modo per fare un grande lavoro è amare ciò che fai.'
+                        }}
+                    ],
+                    success: [
+                        { text: "Success is not final, failure is not fatal.", author: "Winston Churchill", translations: {
+                            'es-ES': 'El éxito no es definitivo, el fracaso no es fatal.',
+                            'fr-FR': 'Le succès n\'est pas définitif, l\'échec n\'est pas fatal.',
+                            'de-DE': 'Erfolg ist nicht endgültig, Scheitern ist nicht tödlich.',
+                            'it-IT': 'Il successo non è definitivo, il fallimento non è fatale.'
+                        }},
+                        { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", translations: {
+                            'es-ES': 'El éxito suele llegar a aquellos que están demasiado ocupados para buscarlo.',
+                            'fr-FR': 'Le succès vient généralement à ceux qui sont trop occupés pour le chercher.',
+                            'de-DE': 'Erfolg kommt normalerweise zu denen, die zu beschäftigt sind, um danach zu suchen.',
+                            'it-IT': 'Il successo solitamente arriva a coloro che sono troppo impegnati per cercarlo.'
+                        }}
+                    ]
+                };
+
+                this.currentQuote = null;
+                this.initializeElements();
+                this.bindEvents();
+                this.updateStats();
+            }
+
+            initializeElements() {
+                this.quoteText = document.getElementById('quoteText');
+                this.authorText = document.getElementById('authorText');
+                this.generateBtn = document.getElementById('generateBtn');
+                this.speakBtn = document.getElementById('speakBtn');
+                this.tweetBtn = document.getElementById('tweetBtn');
+                this.genreSelect = document.getElementById('genreSelect');
+                this.languageSelect = document.getElementById('languageSelect');
+                this.totalQuotesSpan = document.getElementById('totalQuotesSpan');
+                this.quoteGenreSpan = document.getElementById('quoteGenreSpan');
+                this.quoteLanguageSpan = document.getElementById('quoteLanguageSpan');
+            }
+
+            bindEvents() {
+                this.generateBtn.addEventListener('click', () => this.generateQuote());
+                this.speakBtn.addEventListener('click', () => this.speakQuote());
+                this.tweetBtn.addEventListener('click', () => this.tweetQuote());
+                this.genreSelect.addEventListener('change', () => this.updateStats());
+                this.languageSelect.addEventListener('change', () => this.updateQuoteLanguage());
+            }
+
+            generateQuote() {
+                const genre = this.genreSelect.value || this.getRandomGenre();
+                const quotes = this.quotes[genre];
+                this.currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+                this.updateQuoteDisplay(this.currentQuote);
+                this.quoteGenreSpan.textContent = genre.toUpperCase();
+                this.updateStats();
+            }
+
+            updateQuoteDisplay(quote) {
+                const language = this.languageSelect.value || 'en-US';
+                
+                if (language !== 'en-US' && quote.translations && quote.translations[language]) {
+                    this.quoteText.textContent = quote.translations[language];
+                } else {
+                    this.quoteText.textContent = quote.text;
+                }
+                
+                this.authorText.textContent = `- ${quote.author}`;
+                this.quoteLanguageSpan.textContent = language.split('-')[0].toUpperCase();
+            }
+
+            updateQuoteLanguage() {
+                if (this.currentQuote) {
+                    this.updateQuoteDisplay(this.currentQuote);
+                }
+            }
+
+            getRandomGenre() {
+                const genres = Object.keys(this.quotes);
+                return genres[Math.floor(Math.random() * genres.length)];
+            }
+
+            speakQuote() {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(
+                        this.quoteText.textContent
+                    );
+
+                    const language = this.languageSelect.value || 'en-US';
+                    utterance.lang = language;
+
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            tweetQuote() {
+                const quote = `${this.quoteText.textContent} ${this.authorText.textContent}`;
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(quote)}`;
+                window.open(twitterUrl, '_blank');
+            }
+
+            updateStats() {
+                const genre = this.genreSelect.value || 'All';
+                const totalQuotes = genre === 'All' 
+                    ? Object.values(this.quotes).reduce((sum, quotes) => sum + quotes.length, 0)
+                    : this.quotes[genre].length;
+
+                this.totalQuotesSpan.textContent = totalQuotes;
+            }
+        }
+
+        // Initialize the quote generator
+        new QuantumQuoteGenerator();
+    </script>
+</body>
+</html>
